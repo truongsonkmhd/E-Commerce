@@ -1,8 +1,8 @@
 server:
-  port: 69
+  port: 8081
 spring:
   application:
-    name: tay-java-app
+    name: e-commerce-java-app
   profiles:
     active: @spring.profiles.active@
 
@@ -27,6 +27,8 @@ management:
         step: 5s
         enabled: true
 
+api:
+  prefix: /api/v1
 # Logging
 logging:
   level:

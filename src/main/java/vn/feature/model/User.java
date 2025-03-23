@@ -3,82 +3,53 @@ package vn.feature.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import vn.feature.util.Gender;
-import vn.feature.util.UserStatus;
-import vn.feature.util.UserType;
-
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Builder
+@Setter
 @Entity
-@Table(name = "tbl_user")
-public class User extends AbstractEntity {
+@Table(name = "users")
+public class User extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "first_name")
-    private String firstName;
+    @Column(name = "fullname", length = 100)
+    private String fullName;
 
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "phone_number", length = 10, nullable = false)
+    private String phoneNumber;
 
-    @Column(name = "date_of_birth")
-    @Temporal(TemporalType.DATE)
-    private Date dateOfBirth;
+    @Column(name = "address", length = 200)
+    private String address;
 
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "gender")
-    private Gender gender;
-
-    @Column(name = "phone")
-    private String phone;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "username")
-    private String username;
-
-    @Column(name = "password")
+    @JsonIgnore
+    @Column(name = "password", length = 100, nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "type")
-    private UserType type;
+    @Column(name = "is_active")
+    private boolean active;
 
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "status")
-    private UserStatus status;
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
 
-    private Integer age;
+    @Column(name = "facebook_account_id")
+    private int facebookAccountId;
 
-    private Boolean activated;
+    @Column(name = "google_account_id")
+    private int googleAccountId;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-    private Set<Address> addresses = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-    public void saveAddress(Address address) {
-        if (address != null) {
-            if (addresses == null) {
-                addresses = new HashSet<>();
-            }
-            addresses.add(address);
-            address.setUser(this); // save user_id
-        }
-    }
+    // một user có thể có nhiều commnet
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
-    // https://stackoverflow.com/questions/56899986/why-infinite-loop-hibernate-when-load-data
-    @JsonIgnore // Stop infinite loop
-    public Set<Address> getAddresses() {
-        return addresses;
-    }
 }
