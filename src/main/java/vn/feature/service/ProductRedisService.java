@@ -2,6 +2,8 @@ package vn.feature.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.PageRequest;
+import vn.feature.dtos.ProductDTO;
+import vn.feature.model.Product;
 import vn.feature.response.product.ProductResponse;
 
 import java.util.List;

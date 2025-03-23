@@ -27,8 +27,37 @@ management:
         step: 5s
         enabled: true
 
+
+  #config file and multipart file
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # config multiple language (en, vi)
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    default-locale: en    # mặc định english
+
+  #flayway
+  flyway:
+    locations: classpath:/db/migration, classpath:/dev/db/migration
+    baseline-on-migrate: true   # phiên bản baseline = 1, không thực hiện bất kỳ thay đổi nào trong DB
+    baseline-version: 0         # nó sẽ chạy V1__alter_some_tables.sql -> nghĩa là nó sẽ chạy cái version lớn hơn cái version hiện tại của chúng ta
+
+jwt:
+  expiration: 2592000 # 30 days = 30 * 24 * 60 * 60
+  expiration-refresh-token: 5184000 # 60 days = 60 * 24 * 60 * 60
+  secretKey: "QpOD7PxEqUCWRB8BU6e+Hv29TQLUuG+0sxxSJZWAPGhrVVszWZU2hT5RhoQTvhgv"
+
+
 api:
   prefix: /api/v1
+domain:
+    protocol: http://localhost:${server.port}
+
 # Logging
 logging:
   level:
