@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  devtools:
+    add-properties: true
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/e-commerce}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:Son01072004jqk!}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+openapi:
+  service:
+    api-docs: api-service
+    server: http://localhost:${server.port}
+    title: API Document
+    version: 1.0.0
