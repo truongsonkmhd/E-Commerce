@@ -1,6 +1,6 @@
 package vn.feature.util;
 
-public class ConfixSql {
+public class ConfigSql {
 
     public interface Product {
         // Tìm kiếm sản phẩm theo từ khóa và id danh mục

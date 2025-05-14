@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import vn.feature.components.TranslateMessages;
 import vn.feature.exception.payload.DataNotFoundException;
 import vn.feature.exception.payload.InvalidParamException;
 import vn.feature.response.ApiResponse;
@@ -15,7 +14,7 @@ import vn.feature.util.MessageKeys;
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class GlobalExceptionHandler extends TranslateMessages {
+public class GlobalExceptionHandler{
 
     @ExceptionHandler(value = {
             DataNotFoundException.class,
@@ -24,7 +23,7 @@ public class GlobalExceptionHandler extends TranslateMessages {
     public ResponseEntity<ApiResponse> handleSpecificExceptions(Exception e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        String detail = translate(MessageKeys.ERROR_MESSAGE);
+        String detail = MessageKeys.ERROR_MESSAGE;
 
         if (e instanceof DataNotFoundException) {
             status = HttpStatus.NOT_FOUND;
@@ -46,7 +45,7 @@ public class GlobalExceptionHandler extends TranslateMessages {
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setMessage(String.valueOf(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode()));
-        apiResponse.setError(translate(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage()));
+        apiResponse.setError(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 

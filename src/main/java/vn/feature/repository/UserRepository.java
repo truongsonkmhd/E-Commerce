@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.feature.model.User;
-import vn.feature.util.ConfixSql;
+import vn.feature.util.ConfigSql;
 
 import java.util.Optional;
 
@@ -17,6 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     // lấy ra tất cả user (ngoại trừ admin) với truyền admin
-    @Query(ConfixSql.User.GET_ALL_USER)
+    @Query(ConfigSql.User.GET_ALL_USER)
     Page<User> fillAll(@Param("keyword") String keyword, Pageable pageable);
 }

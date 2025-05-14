@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import vn.feature.model.Token;
 import vn.feature.repository.TokenRepository;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ public class JwtTokenUtil {
     private final TokenRepository tokenRepository;
 
     @Value("${jwt.expiration}")
-    private int expiration; // lưu trong biến môi trường
+    private int expiration; // lưu trong biến môi trường ,Thời gian sống của token,
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -41,11 +40,11 @@ public class JwtTokenUtil {
         try {
             return Jwts
                     .builder()
-                    .setClaims(extractClaims)
-                    .setSubject(userDetails.getUsername())
-                    .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                    .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                    .setClaims(extractClaims)// Thêm claims vào token
+                    .setSubject(userDetails.getUsername())// Đặt subject là username
+                    .setIssuedAt(new Date(System.currentTimeMillis())) // Thời gian phát hành token
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Thời gian hết hạn
+                    .signWith(getSignInKey(), SignatureAlgorithm.HS256)// Ký token với HMAC SHA256
                     .compact();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -60,18 +59,20 @@ public class JwtTokenUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) { // Giải mã JWT
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
+    // => muc dich : Giải mã token và lấy toàn bộ claims (dữ liệu được mã hóa trong JWT)
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+    //=> Cho phép lấy bất kỳ thông tin nào từ token thông qua claimsResolver.
 
 
     // if token is valid by checking if token is expired for current user

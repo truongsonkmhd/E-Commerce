@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.feature.components.JwtTokenUtil;
-import vn.feature.components.TranslateMessages;
 import vn.feature.dtos.UserDTO;
 import vn.feature.exception.payload.DataNotFoundException;
 import vn.feature.mapper.UserMapper;
@@ -20,15 +19,13 @@ import vn.feature.repository.RoleRepository;
 import vn.feature.repository.UserRepository;
 import vn.feature.service.UserService;
 import vn.feature.util.MessageKeys;
-import vn.feature.util.RoleType;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j(topic = "USERSERVICEIMPL")
-public class UserServiceImpl extends TranslateMessages implements UserService {
+public class UserServiceImpl  implements UserService {
 
     private final UserRepository userRepository;
 
@@ -45,7 +42,7 @@ public class UserServiceImpl extends TranslateMessages implements UserService {
         // kiểm tra xem số điện thoại đã tồn tại hay chưa
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException(
-                    translate(MessageKeys.PHONE_NUMBER_EXISTED));
+                    MessageKeys.PHONE_NUMBER_EXISTED);
         }
 
         log.info("USERDTO : ",userDTO);
