@@ -15,12 +15,15 @@ import vn.feature.exception.payload.DataNotFoundException;
 import vn.feature.mapper.UserMapper;
 import vn.feature.model.Role;
 import vn.feature.model.User;
-import vn.feature.repository.RoleRepository;
-import vn.feature.repository.UserRepository;
+import vn.feature.repositorys.RoleRepository;
+import vn.feature.repositorys.UserRepository;
 import vn.feature.service.UserService;
 import vn.feature.util.MessageKeys;
+import vn.feature.util.RoleType;
 
 import java.util.Optional;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,13 +33,14 @@ public class UserServiceImpl  implements UserService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public long createUser(UserDTO userDTO)  throws DataIntegrityViolationException {
+    public User createUser(UserDTO userDTO)  throws DataIntegrityViolationException {
         // register new user
         String phoneNumber = userDTO.getPhoneNumber();
         // kiểm tra xem số điện thoại đã tồn tại hay chưa
@@ -58,10 +62,9 @@ public class UserServiceImpl  implements UserService {
                 .googleAccountId(userDTO.getGoogleAccountId()).build();
         Role role = roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new DataNotFoundException(MessageKeys.ROLE_NOT_FOUND));
 
-//        if (role.getName().equalsIgnoreCase(RoleType.ADMIN)) { // không có quyền tạo ADMIN
-//            throw new BadCredentialsException(
-//                    translate(MessageKeys.CAN_NOT_CREATE_ACCOUNT_ROLE_ADMIN));
-//        }
+        if (role.getName().equalsIgnoreCase(RoleType.ADMIN)) { // không có quyền tạo ADMIN
+            throw new BadCredentialsException(MessageKeys.CAN_NOT_CREATE_ACCOUNT_ROLE_ADMIN);
+        }
 
         newUser.setRole(role);
         newUser.setActive(true); // mở tài khoản
@@ -75,29 +78,49 @@ public class UserServiceImpl  implements UserService {
 
         log.info("Request add user,{} {}",newUser);
 
-        userRepository.save(newUser);
-
-        return newUser.getId();
+        return userRepository.save(newUser);
     }
 
     @Override
     public String login(String phoneNumber, String password) throws DataNotFoundException {
         Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
         if(optionalUser.isEmpty()){
-            throw new DataNotFoundException("Invalid phonenumber/passwod");
-        }
-        User existingUser = optionalUser.get(); // muốn trả JWT token?
+            throw new DataNotFoundException(
+                    (MessageKeys.PHONE_NUMBER_AND_PASSWORD_FAILED)
+            );        }
+        User user = optionalUser.get(); // muốn trả JWT token?
         //check password
-        if (existingUser.getFacebookAccountId() == 0 && existingUser.getGoogleAccountId() == 0) {
-            if(!passwordEncoder.matches(password,existingUser.getPassword())){
-                throw new BadCredentialsException("Wrong phone number or password");
+        if (user.getFacebookAccountId() == 0 && user.getGoogleAccountId() == 0) {
+            if(!passwordEncoder.matches(password,user.getPassword())){
+                throw new BadCredentialsException(
+                        (MessageKeys.PHONE_NUMBER_AND_PASSWORD_FAILED)
+                );
             }
         }
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                phoneNumber,password
-        );
+        if (!optionalUser.get().isActive()) {
+            throw new DataNotFoundException((MessageKeys.USER_ID_LOCKED));
+        }
+
         //authenticate with java Spring security
-        authenticationManager.authenticate(authenticationToken);
-        return jwtTokenUtil.generateToken(existingUser);
+        authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(
+                user.getPhoneNumber(),password,user.getAuthorities()
+        ));
+        return jwtTokenUtil.generateToken(user);
+    }
+
+    @Override
+    public User getUserDetailsFromToken(String token) throws Exception {
+        if (jwtTokenUtil.isTokenExpirated(token)) {
+            throw new Exception((MessageKeys.TOKEN_EXPIRATION_TIME));
+        }
+
+        String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
+        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else {
+            throw new DataNotFoundException((MessageKeys.USER_NOT_FOUND));
+        }
     }
 }

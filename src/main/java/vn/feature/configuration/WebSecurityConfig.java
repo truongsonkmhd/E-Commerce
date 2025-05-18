@@ -48,7 +48,8 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
                 .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET,
+
+                .requestMatchers(HttpMethod.GET,
                                 String.format("%s/products/**", apiPrefix),
                                 String.format("%s/products/images/*", apiPrefix),
                                 String.format("%s/orders/**", apiPrefix),
@@ -70,7 +71,8 @@ public class WebSecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST,
+
+                .requestMatchers(HttpMethod.POST,
                                 String.format("%s/users/register", apiPrefix),
                                 String.format("%s/users/login", apiPrefix),
                                 String.format("%s/users/refresh-token", apiPrefix)

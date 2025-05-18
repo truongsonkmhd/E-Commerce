@@ -1,4 +1,4 @@
-package vn.feature.repository;
+package vn.feature.repositorys;
 
 
 import org.springframework.data.domain.Page;
@@ -12,6 +12,7 @@ import vn.feature.util.ConfigSql;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
     boolean existsByPhoneNumber(String phoneNumber);
 
     Optional<User> findByPhoneNumber(String phoneNumber);

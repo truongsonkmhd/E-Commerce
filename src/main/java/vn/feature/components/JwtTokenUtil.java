@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import vn.feature.model.Token;
-import vn.feature.repository.TokenRepository;
+import vn.feature.repositorys.TokenRepository;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,6 +77,7 @@ public class JwtTokenUtil {
 
     // if token is valid by checking if token is expired for current user
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        // kiểm tra token còn hạn hay không, kiểm tra user detail có trùng hay không
         final String phoneNumber = extractPhoneNumber(token);
         Token existingToken = tokenRepository.findByToken(token);
         if (existingToken == null

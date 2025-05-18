@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.feature.exception.payload.DataNotFoundException;
 import vn.feature.exception.payload.InvalidParamException;
 import vn.feature.response.ApiResponse;
-import vn.feature.util.MessageKeys;
+
+import static jakarta.servlet.RequestDispatcher.ERROR_MESSAGE;
 
 @Slf4j
 @RestControllerAdvice
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler{
     public ResponseEntity<ApiResponse> handleSpecificExceptions(Exception e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        String detail = MessageKeys.ERROR_MESSAGE;
+        String detail = ERROR_MESSAGE;
 
         if (e instanceof DataNotFoundException) {
             status = HttpStatus.NOT_FOUND;
