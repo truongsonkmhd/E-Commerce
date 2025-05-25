@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum  ErrorCode {
     UNCATEGORIZED_EXCEPTION(500, "app.uncategorized.500", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_KEY(1001, "app.authorization.403", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1002, "user.existed", HttpStatus.BAD_REQUEST),

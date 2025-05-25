@@ -47,6 +47,12 @@ management:
     baseline-on-migrate: true   # phiên bản baseline = 1, không thực hiện bất kỳ thay đổi nào trong DB
     baseline-version: 0         # nó sẽ chạy V1__alter_some_tables.sql -> nghĩa là nó sẽ chạy cái version lớn hơn cái version hiện tại của chúng ta
 
+data:
+    #redis memory
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6380}
+
 jwt:
   expiration: 2592000 # 30 days = 30 * 24 * 60 * 60
   expiration-refresh-token: 5184000 # 60 days = 60 * 24 * 60 * 60

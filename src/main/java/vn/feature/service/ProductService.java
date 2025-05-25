@@ -11,15 +11,20 @@ import vn.feature.response.product.ProductResponse;
 
 import java.util.List;
 
-public interface ProductRedisService {
+public interface ProductService {
 
+    Product createProduct(ProductDTO productDTO) throws Exception;
+
+    Product getProductById(Long productId) throws Exception;
+
+    // clear cache data in redis
     void clear();
 
-    List<ProductResponse> getAllProducts(String keyword,
+    Page<ProductResponse> getAllProducts(String keyword,
                                          Long categoryId,
                                          PageRequest pageRequest,
                                          String sortField,
-                                         String sortDirection) throws JsonProcessingException;
+                                         String sortDirection)  ;
 
     void saveAllProducts(List<ProductResponse> productResponses,
                          String keyword,
@@ -27,4 +32,17 @@ public interface ProductRedisService {
                          PageRequest pageRequest,
                          String sortField,
                          String sortDirection) throws JsonProcessingException;
+
+    Product updateProduct(Long id, ProductDTO productDTO) throws Exception;
+
+    void deleteProduct(Long id);
+
+    boolean existsProduct(String name);
+
+    ProductImage createProductImage(Long productId,
+                                    ProductImageDTO productImageDTO);
+
+    Product getDetailProducts(long productId) throws Exception;
+
+    List<Product> findProductsByIds(List<Long> productIds);
 }

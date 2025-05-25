@@ -3,16 +3,16 @@ package vn.feature.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.feature.service.ProductRedisService;
+import vn.feature.service.ProductService;
 
 @Slf4j
 @AllArgsConstructor
 public class ProductListener {
 
-    private final ProductRedisService productRedisService;
+    private final ProductService productService;
 
     public ProductListener() {
-        this.productRedisService = null; // Để tránh lỗi biên dịch
+        this.productService = null; // Để tránh lỗi biên dịch
     }
 
     @PrePersist
@@ -23,7 +23,7 @@ public class ProductListener {
     @PostPersist // save = persis
     public void onPostPersist(Product product) {
         log.info("onPostPersist: {}", product);
-        productRedisService.clear();
+        productService.clear();
     }
 
     @PreUpdate
@@ -36,7 +36,7 @@ public class ProductListener {
     public void onPostUpdate(Product product) {
         // update regis cache
         log.info("onPostUpdate: {}", product);
-        productRedisService.clear();
+        productService.clear();
     }
 
     @PreRemove
@@ -48,7 +48,7 @@ public class ProductListener {
     @PostRemove
     public void onPostRemove(Product product) {
         log.info("onPostRemove: {}", product);
-        productRedisService.clear();
+        productService.clear();
     }
 
 }
